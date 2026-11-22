@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Wichtel-Adventskalender</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fbf6ee;--card:#fff;--ink:#2b2320;--mute:#7a6e66;--acc:#b3261e;--acc2:#2f6b3f;--line:#e8dccb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1816;--card:#2a2321;--ink:#f3e9df;--mute:#aa9c90;--acc:#ff7a6e;--acc2:#7fcf92;--line:#443a35;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1816;--card:#2a2321;--ink:#f3e9df;--mute:#aa9c90;--acc:#ff7a6e;--acc2:#7fcf92;--line:#443a35;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+main{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.6rem;margin:0 0 12px}
+.sub{color:var(--mute);margin:0 0 14px}
+.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px;color:var(--mute);cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc);font-weight:600}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.who button,.login button{font:inherit;padding:9px 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.login button.go{background:var(--acc);border-color:var(--acc);color:#fff}
+.login{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.login input{font:inherit;flex:1;min-width:160px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.err{color:var(--acc);min-height:1.4em;margin:0 0 8px}
+h2{font-size:1.1rem;margin:22px 0 8px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--acc2);width:0;transition:width .25s}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.item input{width:22px;height:22px;accent-color:var(--acc2);flex:none}
+.day{flex:none;width:56px;text-align:center;border-right:1px solid var(--line);padding-right:12px}
+.day b{display:block;font-size:1.3rem;color:var(--acc)}
+.day span{font-size:.75rem;color:var(--mute)}
+.item.done .txt{text-decoration:line-through;opacity:.6}
+.item label{flex:1;cursor:pointer;display:flex;align-items:center;gap:8px}
+.tag{font-size:.75rem;background:var(--line);border-radius:6px;padding:2px 7px;color:var(--mute)}
+.chip{display:inline-block;color:#fff;border-radius:999px;padding:2px 11px;font-weight:600}
+.banner{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center}
+.banner .chip{font-size:1.15rem;padding:4px 16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.door{border-radius:12px;min-height:84px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:2px solid var(--line);background:var(--card);color:var(--mute)}
+.door b{font-size:1.25rem}
+.door small{font-size:.72rem;opacity:.85}
+.door.open{color:#fff;border-color:transparent}
+.door.today{outline:3px solid var(--acc);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:.85rem}
+.note{color:var(--mute);font-size:.85rem;margin-top:24px}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+</style>
+</head>
+<body>
+<main>
+  <h1>🎁 Wichtel-Adventskalender</h1>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-cal" aria-selected="true">Kalender</button>
+    <button role="tab" id="t-mine" aria-selected="false">Meine Geschenke</button>
+  </div>
+  <section id="cal"></section>
+  <section id="mine" hidden>
+    <p class="sub" id="hint">Wähle deinen Namen und gib dein Passwort ein.</p>
+    <div class="who" id="who"></div>
+    <div id="out"></div>
+    <p class="note">Das Häkchen wird auf diesem Gerät gespeichert.</p>
+  </section>
+</main>
+<script>
+const PEOPLE=["Mama","Papa","Timon","Mia","Hanna"];
+const COL={Mama:"#d6336c",Papa:"#1c7ed6",Timon:"#2f9e44",Mia:"#9c36b5",Hanna:"#e8590c"};
+const FREE="#6b7280";
+const YEAR=2026;
+const ENC={"Mama":{"s":"qJzdsjNqwREuytZ8sUjmkw==","i":"xCV6nQgWuDwVdJHq","c":"1DzNt/RB/QyAnnUWOgi/b6oWtimBmXS4xR+U2jR294JwCHolWxf9lYyunIFE5DTaXJtihoja0IFh2fmGx/u1Jcmk0BVOhjmzVGZBl4euLgBGM2Fq71MEx18LLts/W7jHCGt5aa+jjvOAj0VVXSPSyXIPTc4MnZBZLTvbC4Dum2CS5Con3Yywycgzv+dMVfx3jKsIoNdpSNGM0JqrvJ4kNgqic/4TYl0oijkWqoE="},"Papa":{"s":"XyA1jXjPF/+yCpdcECfQlg==","i":"D8KuNhjXlyiaSwBQ","c":"U3dzsMwzSLmCRmTbv0EmYTGFHQdDknBo2I/1ZaBMLgyWHbnwYtR/RzHAx2Cr0NXtW/b+CXG0BqFFEwh+gIEzY2OpXGRN29BHECc85uExs+kuZb6EWtalZ3u1i1HJtqmcXR/ANGnQ7DcZVxHAtC4zcpGaxH3X/J4wF19ujQ2CDJTmzhF0dPNmrDamd60JdbDkoUjdji7k59LpQMmiWQq2WLG9OAM5lp4UCkEw0puFxWgheHZQMReH/vn/7P34j58W/uE4pVg7GyAVcYezUONqfi+zaW0QYf2T699TTOHpSoPbidbVB3mmpGEZTFTRc2i4oJDBclXi39C8CoN5foQKRoU5FvgbCgiov3rmDkpvpQO4YoNvyebVsM3Q2nTLqTCZaeYeu827EiV5t8RL5Lei9Pd4RHu0toyx6wRUsr77PSm7/Kjy5QPVQ2HaVSa5DzQVJ9coBpDaUThuyJPW5AhlNZyNE25bslXnzNSvUJ9EmLLeV0kvG1UODyBGOdYjXRbEf1y8UQqotXXKNJj8qRCzeFrHFT/BP3/tjXxGk/SXj2wbDblV3C4="},"Timon":{"s":"vpXR5wIqlrvYEVmZM1jeOA==","i":"emjecMEQ2KRqIAFj","c":"qENt1c/boFQTU8QtLIEHcb9RdZO6AIDa1FuMc0DrUw/XVDe/aniSrIs/rqKd1eTj8fSX6vQUsYnc/GI4u9N3vN23hWJr6Z+hYxG7fVyq9nTJxnXOTyuKveUaE5yr2mxjL030k7ylfQTPYhZ/WmgUJ2y/1vHDLKCgUw86rPs3H0nFVh/EPFGCrdGmEVzmkCJgsUwfMAvnOITkfrLa/mAeTa8XW/tvFr8CYWUMHg=="},"Mia":{"s":"vRTSGsVE0ZqC77tQcBry7A==","i":"alUb+Lo7kbWY01Jd","c":"qXPGfROYIrmhfSwYJZxrr3+Vfc3TwsGkgv2jaf/G7+8+pLLr2LIhF1ouLVwu6KDba4LVl2uG4+dd8+TiCrxmIwVwPJlLadszKgogojPIRb7lbGoaJpMiqYiqrOx1+sBpivdpokahngMIuIsX5VszqAIRtoHPV8RgWutHwduH46NTOE8eUsehyanGcsphWE2OaRi2joNJiFeK/Ut7DJnmmb6C7J0KYOmHQn4fwmY="},"Hanna":{"s":"5KjF2lmVa+3gxUVen7wnOQ==","i":"DRMGIHGql7rh4NfJ","c":"TTlI3Qk87ihWoMEP6AGXybIQ08Oz2plF3Pt4PiqidD31b9OiKVnsaMbyzzWduqRcPJT5LPFPCXyf6avsnOnPan2K7vqXbuS5xY2cJOK6e3Q0YX6uxDoXA95H5uXpPZpQiiLNNWa2CTXO8z/SS/vAfUIKEQiFLtiH/0cXAHlpenl42syY4tNVaLlWbQiAhpWWHSKftsuVHpjhXeXCA6QI5jAoJv3XvN/UO5og4w=="}};
+const CAL=JSON.parse(atob("WyJNYW1hIiwiIiwiSGFubmEiLCIiLCJNaWEiLCJIYW5uYSIsIlBhcGEiLCJNYW1hIiwiSGFubmEiLCJNaWEiLCIiLCJUaW1vbiIsIiIsIkhhbm5hIiwiTWlhIiwiVGltb24iLCJQYXBhIiwiVGltb24iLCJNaWEiLCJQYXBhIiwiUGFwYSIsIlRpbW9uIiwiTWFtYSIsIk1hbWEiXQ=="));
+const WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+const chip=n=>'<span class="chip" style="background:'+(COL[n]||FREE)+'">'+n+'</span>';
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function decrypt(p,pw){
+  const e=ENC[p];
+  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw.trim().toLowerCase()),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(e.s),iterations:150000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(e.i)},key,b64(e.c));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}return null}
+let done={};try{done=JSON.parse(ls("wichteln-done")||"{}")}catch(e){}
+let sel=ls("wichteln-me"), list=null, err="";
+if(!PEOPLE.includes(sel))sel=null;
+const wd=d=>WD[new Date(YEAR,11,d).getDay()];
+
+/* Kalender: Freischaltung um 9 Uhr (Berlin) */
+function berlin(){
+  const p={};
+  new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Berlin",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",hourCycle:"h23"}).formatToParts(new Date()).forEach(x=>{if(x.type!=="literal")p[x.type]=+x.value});
+  return p;
+}
+function state(){
+  const p=berlin();
+  if(p.year<YEAR||(p.year===YEAR&&p.month<12))return{open:0,today:0};
+  if(p.year>YEAR||p.day>24)return{open:24,today:0};
+  return{open:p.hour>=9?p.day:p.day-1,today:p.hour>=9?p.day:0};
+}
+function renderCal(){
+  const s=state(), el=document.getElementById("cal");
+  let top;
+  if(s.today){
+    const r=CAL[s.today-1];
+    top=r?'Heute, '+s.today+'. Dezember, bekommt<br>'+chip(r)+'<br>ein Geschenk 🎁':'Heute, '+s.today+'. Dezember, ist ein Überraschungstag von Papa 🎅';
+  }else if(s.open===0){
+    top='Die erste Tür öffnet am <b>1. Dezember um 9 Uhr</b>. 🎄';
+  }else if(s.open>=24){
+    top='Alle Türen sind offen. Frohe Weihnachten! 🎄';
+  }else{
+    top='Die nächste Tür öffnet um <b>9 Uhr</b>.';
+  }
+  let g='<div class="banner">'+top+'</div><div class="grid">';
+  for(let d=1;d<=24;d++){
+    const open=d<=s.open, r=CAL[d-1];
+    if(open){
+      g+='<div class="door open'+(d===s.today?' today':'')+'" style="background:'+(r?COL[r]:FREE)+'"><b>'+d+'</b><small>'+(r||"Papa 🎅")+'</small></div>';
+    }else{
+      g+='<div class="door"><b>'+d+'</b><small>🔒 '+wd(d)+'</small></div>';
+    }
+  }
+  g+='</div><div class="legend">'+PEOPLE.map(chip).join("")+'<span class="chip" style="background:'+FREE+'">Papa-Tag</span></div>';
+  g+='<p class="note">Die Farbe zeigt, wer das Geschenk bekommt. Die Türen öffnen sich täglich um 9 Uhr.</p>';
+  el.innerHTML=g;
+}
+
+function tab(t){
+  document.getElementById("cal").hidden=t!=="cal";
+  document.getElementById("mine").hidden=t!=="mine";
+  document.getElementById("t-cal").setAttribute("aria-selected",t==="cal");
+  document.getElementById("t-mine").setAttribute("aria-selected",t==="mine");
+}
+document.getElementById("t-cal").onclick=()=>tab("cal");
+document.getElementById("t-mine").onclick=()=>tab("mine");
+
+async function login(p,pw){
+  try{list=await decrypt(p,pw);err="";ls("wichteln-me",p);ls("wichteln-pw",pw.trim().toLowerCase())}
+  catch(e){list=null;err="Falsches Passwort."}
+  render();
+}
+function logout(){list=null;sel=null;ls("wichteln-pw",null);ls("wichteln-me",null);err="";render()}
+function render(){
+  const who=document.getElementById("who");who.innerHTML="";
+  document.getElementById("hint").hidden=!!list;
+  if(!list){
+    PEOPLE.forEach(p=>{const b=document.createElement("button");b.textContent=p;
+      b.style.borderColor=COL[p];if(p===sel){b.style.background=COL[p];b.style.color="#fff"}
+      b.onclick=()=>{sel=p;err="";render()};who.appendChild(b)});
+  }
+  const out=document.getElementById("out");out.innerHTML="";
+  if(!sel)return;
+  if(!list){
+    out.innerHTML='<div class="login"><input type="password" id="pw" placeholder="Passwort für '+sel+'" autocomplete="current-password"><button class="go" id="go">Öffnen</button></div><p class="err">'+err+'</p>';
+    const go=()=>login(sel,document.getElementById("pw").value);
+    document.getElementById("go").onclick=go;
+    document.getElementById("pw").onkeydown=e=>{if(e.key==="Enter")go()};
+    return;
+  }
+  const n=list.filter(x=>done[sel+":"+x.day]).length;
+  const h=document.createElement("div");
+  h.innerHTML='<h2>Deine Geschenke, '+chip(sel)+'</h2><div class="bar"><i style="width:'+(100*n/list.length)+'%"></i></div><div class="sub">'+n+' von '+list.length+' besorgt · <button class="link" id="lo">Abmelden</button></div>';
+  out.appendChild(h);
+  h.querySelector("#lo").onclick=logout;
+  list.forEach(x=>{
+    const k=sel+":"+x.day;
+    const d=document.createElement("div");d.className="item"+(done[k]?" done":"");
+    const txt=x.free?'Freier Tag – Papa füllt auf':'Geschenk für '+chip(x.text.replace("Geschenk für ",""));
+    d.innerHTML='<div class="day"><b>'+x.day+'</b><span>'+wd(x.day)+' Dez</span></div><label><input type="checkbox"'+(done[k]?" checked":"")+'><span class="txt">'+txt+'</span>'+(x.free?'<span class="tag">frei</span>':'')+'</label>';
+    d.querySelector("input").onchange=e=>{if(e.target.checked)done[k]=1;else delete done[k];ls("wichteln-done",JSON.stringify(done));render()};
+    out.appendChild(d);
+  });
+}
+renderCal();setInterval(renderCal,60000);
+(async()=>{const pw=ls("wichteln-pw");if(sel&&pw)await login(sel,pw);else render()})();
+</script>
+</body>
+</html>
