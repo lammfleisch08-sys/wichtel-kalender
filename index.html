@@ -42,6 +42,8 @@ h2{font-size:1.1rem;margin:22px 0 8px}
 .door small{font-size:.72rem;opacity:.85}
 .door.open{color:#fff;border-color:transparent}
 .door.today{outline:3px solid var(--acc);outline-offset:2px}
+.door.papa{border:2px dashed #6b7280}
+.door.papa small{font-weight:600}
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:.85rem}
 .note{color:var(--mute);font-size:.85rem;margin-top:24px}
 .link{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
@@ -67,8 +69,8 @@ const PEOPLE=["Mama","Papa","Timon","Mia","Hanna"];
 const COL={Mama:"#d6336c",Papa:"#1c7ed6",Timon:"#2f9e44",Mia:"#9c36b5",Hanna:"#e8590c"};
 const FREE="#6b7280";
 const YEAR=2026;
-const ENC={"Mama":{"s":"qJzdsjNqwREuytZ8sUjmkw==","i":"xCV6nQgWuDwVdJHq","c":"1DzNt/RB/QyAnnUWOgi/b6oWtimBmXS4xR+U2jR294JwCHolWxf9lYyunIFE5DTaXJtihoja0IFh2fmGx/u1Jcmk0BVOhjmzVGZBl4euLgBGM2Fq71MEx18LLts/W7jHCGt5aa+jjvOAj0VVXSPSyXIPTc4MnZBZLTvbC4Dum2CS5Con3Yywycgzv+dMVfx3jKsIoNdpSNGM0JqrvJ4kNgqic/4TYl0oijkWqoE="},"Papa":{"s":"XyA1jXjPF/+yCpdcECfQlg==","i":"D8KuNhjXlyiaSwBQ","c":"U3dzsMwzSLmCRmTbv0EmYTGFHQdDknBo2I/1ZaBMLgyWHbnwYtR/RzHAx2Cr0NXtW/b+CXG0BqFFEwh+gIEzY2OpXGRN29BHECc85uExs+kuZb6EWtalZ3u1i1HJtqmcXR/ANGnQ7DcZVxHAtC4zcpGaxH3X/J4wF19ujQ2CDJTmzhF0dPNmrDamd60JdbDkoUjdji7k59LpQMmiWQq2WLG9OAM5lp4UCkEw0puFxWgheHZQMReH/vn/7P34j58W/uE4pVg7GyAVcYezUONqfi+zaW0QYf2T699TTOHpSoPbidbVB3mmpGEZTFTRc2i4oJDBclXi39C8CoN5foQKRoU5FvgbCgiov3rmDkpvpQO4YoNvyebVsM3Q2nTLqTCZaeYeu827EiV5t8RL5Lei9Pd4RHu0toyx6wRUsr77PSm7/Kjy5QPVQ2HaVSa5DzQVJ9coBpDaUThuyJPW5AhlNZyNE25bslXnzNSvUJ9EmLLeV0kvG1UODyBGOdYjXRbEf1y8UQqotXXKNJj8qRCzeFrHFT/BP3/tjXxGk/SXj2wbDblV3C4="},"Timon":{"s":"vpXR5wIqlrvYEVmZM1jeOA==","i":"emjecMEQ2KRqIAFj","c":"qENt1c/boFQTU8QtLIEHcb9RdZO6AIDa1FuMc0DrUw/XVDe/aniSrIs/rqKd1eTj8fSX6vQUsYnc/GI4u9N3vN23hWJr6Z+hYxG7fVyq9nTJxnXOTyuKveUaE5yr2mxjL030k7ylfQTPYhZ/WmgUJ2y/1vHDLKCgUw86rPs3H0nFVh/EPFGCrdGmEVzmkCJgsUwfMAvnOITkfrLa/mAeTa8XW/tvFr8CYWUMHg=="},"Mia":{"s":"vRTSGsVE0ZqC77tQcBry7A==","i":"alUb+Lo7kbWY01Jd","c":"qXPGfROYIrmhfSwYJZxrr3+Vfc3TwsGkgv2jaf/G7+8+pLLr2LIhF1ouLVwu6KDba4LVl2uG4+dd8+TiCrxmIwVwPJlLadszKgogojPIRb7lbGoaJpMiqYiqrOx1+sBpivdpokahngMIuIsX5VszqAIRtoHPV8RgWutHwduH46NTOE8eUsehyanGcsphWE2OaRi2joNJiFeK/Ut7DJnmmb6C7J0KYOmHQn4fwmY="},"Hanna":{"s":"5KjF2lmVa+3gxUVen7wnOQ==","i":"DRMGIHGql7rh4NfJ","c":"TTlI3Qk87ihWoMEP6AGXybIQ08Oz2plF3Pt4PiqidD31b9OiKVnsaMbyzzWduqRcPJT5LPFPCXyf6avsnOnPan2K7vqXbuS5xY2cJOK6e3Q0YX6uxDoXA95H5uXpPZpQiiLNNWa2CTXO8z/SS/vAfUIKEQiFLtiH/0cXAHlpenl42syY4tNVaLlWbQiAhpWWHSKftsuVHpjhXeXCA6QI5jAoJv3XvN/UO5og4w=="}};
-const CAL=JSON.parse(atob("WyJNYW1hIiwiIiwiSGFubmEiLCIiLCJNaWEiLCJIYW5uYSIsIlBhcGEiLCJNYW1hIiwiSGFubmEiLCJNaWEiLCIiLCJUaW1vbiIsIiIsIkhhbm5hIiwiTWlhIiwiVGltb24iLCJQYXBhIiwiVGltb24iLCJNaWEiLCJQYXBhIiwiUGFwYSIsIlRpbW9uIiwiTWFtYSIsIk1hbWEiXQ=="));
+const ENC={"Mama":{"s":"joC06k3Ku3UK5AAjkDoLwA==","i":"tmuPItGPih43tTvH","c":"JGpGT6eATkThBsAGDaIlvklwNZ9yIFADXyxkhLAPYQWOO+SXgnfpSzaS3meSGX+Cl+YklJL8rVYrpj9pFhnSywgV6Dxh2rnsA/ceWtPRoTBpBa1A0nUEcGoYbbv3Xn+YkolBqQeNCWSOFtdhNUrrC4bUJtT0A/sTiV69XHpDoGbBnxuHa4VwPbnR9ZVlmBoMB/0g54PpieKNwlDC0atjdoZbPAsMf1dzBW4rhdE="},"Papa":{"s":"hNocXULV3oI7GNlE4PAaBg==","i":"geUkY5zE5ZfyiSdd","c":"uNcQAJIK/f98XCmX+fkN/7eEOB4IBHorG/3cg8pYUiSUd8pGltcCE3dQRaA26lNSf0vhyNqxW0i4QWPNQAEQb4Z5cFDL7l9Ev9T2XT3NOxzwQZKdgPtcTvfuGbqN9qTltVtFqogODODeT2s2XiuIon/3I+9dTNSGOPozH13X4iehNQ/dp5dQaAHROZeaz01KISLMyxrPNLu1gUsKwVRkh8BcZSQrXqvcNaT7bHJ+LAOlCTBgy+tGgLxfSOp/mcpgLy0IXJojJJP94IfYmfnE+Zh4zgLe2Yozxqck1KF9Iy95wt4ASdEQ7yiTQZFYdZZ2shADQgk7lg9eUL2E/OE6aQOCD45erPDP30pZfS0WVOUDe7yRujGGMEOsDaIcbDoSwtjmutcSsA+UMUo09ZCMJCjVvFFlN6P1CaDy62BUxnLR5b+WjVvwJnf1XVWiMI/jTF4w58G5+QkiIni+DL8ObfUURKm4uhrNSbrBUJOqCQS/Fw59/HZmaixO7ajEwBToRLP3RtnCwIAtKvHaa227vD07RsF4qTbWL6avF7A6mnUFLGQhVu/gMw=="},"Timon":{"s":"3xUams+il5azcCpDQfEzHA==","i":"9Wa+1TAnlA9LNRfN","c":"TUO/Yag5KflEFAAEck/YMCqO8crc8Zkb0+m7qc6zZFRPauHJVSFvAdiYUv+FSi34POHZAXoFXI3EqoPFPMHEx5y3ZjjRNsdjnRA4G99KerQqfn6hwx2TtURzjWjnKQjsXaAow1qjmDUezXeLabRQK5Ibv2+9utjLYeR7trpFVFiJpmtgbLAskHlUMCgxlvJ88S6dopPIUjcT0smVwBNdwofjtL9tUuwFCJL9"},"Mia":{"s":"l89IWBuR3fuGF5AvmLzBkQ==","i":"HV01079VKLKqp9EY","c":"iFJlvb62MQlkrp73YWqm9dR+2p6SWmjZlQEKe2CEYCuTlkGUd6yPgFZxdZkL6upSvBBbDyKTcnG4AQC5175Uk+YqA8Zdj+qIatdwb3zNcu10Qe6errNxEcEfvji59y2UCCDDqFXZYsTHnvDKgd/Sf6ci82h/iQIi+gUTfwRygyJ8vrfd4tHJ4spx70RcycIvZgWFSMlRwfxisGmBw+cEo6ORxtklTE66zX3tGg=="},"Hanna":{"s":"T/vk0Bkpr3SQGUQLAfogUA==","i":"zpdvK9zjCICJUMcU","c":"LUUHeW4KBqmT0C3V3dl8eidT4S4JZVQiuTz40ZiM5HoaiUdYPgh4K9RP+NVnbtGXOIH3n7JCOsbAY2/+zsUegR+FRku/mduRe2CW2KC5tsmiKVqRSwB+hD96Ka86LPvPlJ7lyfqjcRd3u1p0s/0LRMVMDHKiioS8cA5Uv7bd9o38hs9snnaCbEo3HEnWOLuoZORz0t3pNIE+aDuXiGiKgWCXI6EOT/aUmwlYEw=="}};
+const CAL=JSON.parse(atob("WyJNYW1hIiwiSGFubmEiLCJNaWEiLCJIYW5uYSIsIlBhcGEiLCJNYW1hIiwiSGFubmEiLCJNaWEiLCJUaW1vbiIsIkhhbm5hIiwiTWlhIiwiVGltb24iLCJQYXBhIiwiVGltb24iLCJNaWEiLCJQYXBhIiwiUGFwYSIsIlRpbW9uIiwiTWFtYSIsIk1hbWEiLCIiLCIiLCIiLCIiXQ=="));
 const WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
 const chip=n=>'<span class="chip" style="background:'+(COL[n]||FREE)+'">'+n+'</span>';
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -114,13 +116,13 @@ function renderCal(){
   for(let d=1;d<=24;d++){
     const open=d<=s.open, r=CAL[d-1];
     if(open){
-      g+='<div class="door open'+(d===s.today?' today':'')+'" style="background:'+(r?COL[r]:FREE)+'"><b>'+d+'</b><small>'+(r||"Papa 🎅")+'</small></div>';
+      g+='<div class="door open'+(r?'':' papa')+(d===s.today?' today':'')+'" style="background:'+(r?COL[r]:FREE)+'"><b>'+d+'</b><small>'+(r||"Papa-Tag 🎅")+'</small></div>';
     }else{
-      g+='<div class="door"><b>'+d+'</b><small>🔒 '+wd(d)+'</small></div>';
+      g+='<div class="door'+(r?'':' papa')+'"><b>'+d+'</b><small>'+(r?'🔒 '+wd(d):'🎅 Papa-Tag')+'</small></div>';
     }
   }
   g+='</div><div class="legend">'+PEOPLE.map(chip).join("")+'<span class="chip" style="background:'+FREE+'">Papa-Tag</span></div>';
-  g+='<p class="note">Die Farbe zeigt, wer das Geschenk bekommt. Die Türen öffnen sich täglich um 9 Uhr.</p>';
+  g+='<p class="note">Die Farbe zeigt, wer das Geschenk bekommt. Die Türen öffnen sich täglich um 9 Uhr. Die letzten vier Tage (21. bis 24. Dezember) sind Papa-Tage und gestrichelt umrandet.</p>';
   el.innerHTML=g;
 }
 
